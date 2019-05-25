@@ -1,29 +1,4 @@
-# ntuniversityscience
-
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# 网易云项目
+-- 根据网易云node.js提供的端口: https://github.com/Binaryify/NeteaseCloudMusicApi
+-- 正在编写中
+-- 功能还未完善
