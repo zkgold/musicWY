@@ -7,7 +7,8 @@ export default new Vuex.Store({
 	state: {
 		uid: '?',
 		login: false,
-		barAtHeader: [true,false,false,false,false,false]
+		barAtHeader: [true,false,false,false,false,false],
+		musicUrl: "",
 	},
 	mutations: {
 		setUid(state,uid) {
@@ -21,7 +22,10 @@ export default new Vuex.Store({
 		},
 		userOut(state) {
 			state.login = false
-		}
+		},
+		setMusicUrl(state, url) {
+			state.musicUrl = url
+		},
 	},
 	action: {
 	}

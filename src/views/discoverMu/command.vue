@@ -1,6 +1,7 @@
 <template>
 	<div id="app">
-		<loop class="loopPic" :picData="picData"></loop>
+		<div><loop class="loopPic" :picData="picData"></loop></div>
+		
 		<div class="wrap">
 			<div class="wrap_left">
 				<div class="content_box">
@@ -8,7 +9,7 @@
 					<!-- 这里几个相似 -->
 					<div class="content hot">
 						<div class="hot_head">
-							<a href="#" class="hot_super">hot</a>
+							<a href="#" class="hot_super">热门推荐</a>
 							<div>
 								<ul>
 									<li>华语</li>
@@ -19,58 +20,65 @@
 								</ul>
 								
 							</div>
-							<div class="hot_more">more</div>
+							<div class="hot_more"  @click="$router.push('/discoverMu/songSheet')">更多</div>
 						</div>
 						<indexPageNeed :obj="part1"></indexPageNeed>
 					</div>
+					<div v-show="login">
+						login?
+					</div>
 					<div class="content per">
 						<div class="per_head">
-							<a href="#" class="per_super">per</a>
-							<div class="per_more">more</div>
+							<a href="#" class="per_super">新碟上架</a>
+							<div class="per_more"  @click="$router.push('#')">更多</div>
 						</div>
-						<indexPageNeed :obj="part2"></indexPageNeed>
+						<indexPageAlso></indexPageAlso>
 					</div>
-					<!-- <div class="content new">
-						<div class="new_head">
-							<a href="#" class="new_super">new</a>
-							<div class="new_more">more</div>
-						</div>
-					</div> -->
 					<div class="content rank">
 						<div class="rank_head">
-							<a href="#" class="rank_super">new</a>
-							<div class="rank_more">more</div>
+							<a href="#" class="rank_super">榜单</a>
+							<div class="rank_more" @click="$router.push('/discoverMu/rank')">更多</div>
 						</div>
-						<indexPageNeedToo :obj1="part31" :obj2="part32" :obj3="part33"></indexPageNeedToo>
+						<indexPageNeedToo></indexPageNeedToo>
 					</div>
 				</div>
 			</div>
 			<div class="wrap_right">
 				<div class="user">
-					
+					<div v-if="login" class="user_box">
+						<span>你已登录</span>
+					</div>
+					<div else class="user_not_box">
+						<span>登录此网易云音乐，享受不到一点乐趣，并且不知道能不能同步到手机</span>
+						<button @click="loginClick()">用户登录</button>
+					</div>
 				</div>
 				<div class="songer">
 					<div class="songer_head">
-						<span class="songer_head_left">入驻歌手</span>
-						<span class="songer_head_right">more</span>
+						<span class="songer_head_left">热门歌手</span>
+						<span class="songer_head_right" @click="toPageSonger()">查看全部</span>
 					</div>
 					<ul>
-						<li></li>
-						<li></li>
-						<li></li>
+						<li v-for="(item,id) in artists" :key="id">
+							<img :src="item.picUrl" class="artist_img">
+							<span class="artist_name" @click="toArtist(item.id)">{{item.name}}</span>
+						</li>
 					</ul>
 				</div>
 				<div class="anchor">
 					<div class="anchor_head">
 						<span class="anchor_head_left">主播</span>
-						<span class="anchor_head_right">more</span>
+						<span class="anchor_head_right">查看全部</span>
 					</div>
 					<ul>
-						<li></li>
-						<li></li>
-						<li></li>
+						<li v-for="(item,id) in djRadios" :key="id">
+							<img :src="item.picUrl" class="dj_img">
+							<span class="dj_name">{{item.name}}</span>
+							<span class="dj_category">{{item.category}}</span>
+						</li>
 					</ul>
 				</div>
+				<div class="blank"></div>
 			</div>
 		</div>
 		<div class='footer'>
@@ -82,6 +90,7 @@
 <script>
 import loop from '../../components/loop.vue'
 import indexPageNeed from '../../components/indexPageNeed.vue'
+import indexPageAlso from '../../components/indexPageNeedAlso.vue'
 import indexPageNeedToo from '../../components/indexPageNeedToo.vue'
 import * as request from '../../api/loadFirstInterface.js'
 export default {
@@ -93,13 +102,26 @@ export default {
 			},
 			part1: [],
 			part2: [],
-			part31: [],
-			part32: [],
-			part33: [],
+			login: false,
+			djRadios: [],
+			artists: [],
+
+		}
+	},
+	methods: {
+		toArtist(id) {
+			console.log(id)
+		},
+		loginClick() {
+			let login = document.querySelector(".iNeedClick")
+			login.click()
+		},
+		toPageSonger() {
+			this.$router.push('/discoverMu/songer')
 		}
 	},
 	components: {
-		loop, indexPageNeed, indexPageNeedToo
+		loop, indexPageNeed, indexPageAlso, indexPageNeedToo
 	},
 	created() {
 		request.personalized().then(res => {
@@ -112,7 +134,6 @@ export default {
 			}).slice(0,8)
 		})
 		request.newestAlbum().then(res => {
-			console.log('------')
 			this.part2 = res.albums.map((ele) => {
 				let names = {}
 				names['name'] = ele['name']
@@ -122,45 +143,13 @@ export default {
 				return names
 			}).slice(0,4)
 		})
-		request.idxTopList(0).then(res => {
-			res.privileges.slice(0,10).map((ele) => {
-				return request.getSongDetails(ele.id).then(res => {
-					let names = {}
-					names.name = res.songs[0]['name']
-					names.id = res.songs[0]['id']
-					names.author = res['songs'][0]['ar'][0]['name']
-					let midName = new Array().concat([...this.part32]).concat(names)
-					this.part32 = midName
-					return names
-				})
-			})
+		request.artistTopList().then(res => {
+			this.artists = res.list.artists.slice(0,5)
+			console.log(this.artists)
 		})
-		request.idxTopList(2).then(res => {
-			res.privileges.slice(0,10).map((ele) => {
-				return request.getSongDetails(ele.id).then(res => {
-					let names = {}
-					names.name = res.songs[0]['name']
-					names.id = res.songs[0]['id']
-					names.author = res['songs'][0]['ar'][0]['name']
-					let midName = new Array().concat([...this.part33]).concat(names)
-					this.part33 = midName
-					return names
-				})
-				return ele.id
-			})
-		})
-	 	request.idxTopList(3).then(res => {
-			res.privileges.slice(0,10).map((ele) => {
-				return request.getSongDetails(ele.id).then(res => {
-					let names = {}
-					names.name = res.songs[0]['name']
-					names.id = res.songs[0]['id']
-					names.author = res['songs'][0]['ar'][0]['name']
-					let midName = new Array().concat([...this.part31]).concat(names)
-					this.part31 = midName
-					return names
-				})
-			})
+		request.recommendDj().then(res => {
+			this.djRadios = res.djRadios.slice(0,5)
+			console.log(this.djRadios)
 		})
 	}
 }
@@ -184,29 +173,196 @@ export default {
 	background-color: #ffffff;
 	border-left: 1px solid black;
 	border-right: 1px solid black;
+	.wrap_left{
+		float: left;
+		width: 100%;
+		margin-right: -253px;
+		min-height: 10px;
+		height: auto;
+		overflow: hidden;
+		.content_box{
+			width: 729px;
+			height: auto;
+			.content{
+				width: 709px;
+				display: block;
+				margin: 10px;
+				margin-bottom: 15px;
+				min-height: 40px;
+			}
+		}
+	}
+	.wrap_right{
+		float: right;
+		width: 250px;
+		min-height: 100px;
+		overflow: hidden;
+		border-left: 1px solid #000000;
+		/*border-bottom: 1px solid #000000;*/
+		.user{
+			width: 100%;
+			height: 165px;
+			border-bottom: 1px solid #000000;
+			.user_not_box{
+				width: 200px;
+				height: 115px;
+				padding: 25px;
+				background-color: #eee;
+				span{
+					font-size: 12px;
+				}
+				button{
+					display: block;
+					width: 80px;
+					height: 30px;
+					background-color: #ff0000;
+					border: 1px solid #000;
+					margin: 30px auto 0;
+				}
+			}
+		}
+		.songer{
+			width: auto;
+			padding: 10px;
+			height: auto;
+			font-size: 14px;
+			&::after{
+				display: block;
+				content: '';
+				clear: both;
+			}
+			.songer_head{
+				width: 100%;
+				height: 24px;
+				border-bottom: 1px solid #000000;
+				.songer_head_left{
+					float: left;
+					overflow: hidden;
+					line-height: 24px;
+				}
+				.songer_head_right{
+					float: right;
+					overflow: hidden;
+					line-height: 24px;
+					cursor: pointer;
+					&:hover{
+						text-decoration: underline;
+					}
+				}
+
+			}
+			ul{
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				li{
+					width: 100%;
+					height: 62px;
+					background-color: #f5f5f5;
+					margin: 10px 0;
+					.artist_img{
+						width: 50px;
+						height: 50px;
+						margin: 6px;
+					}
+					.artist_name{
+						/*display: inline-block;*/
+						vertical-align: top;
+						line-height: 62px;
+						margin-left: 20px;
+						cursor: pointer;
+						&:hover{
+							text-decoration: underline;
+						}
+					}
+				}
+			}
+		}
+		.anchor{
+			width: auto;
+			padding: 10px;
+			height: auto;
+			font-size: 14px;
+			&::after{
+				display: block;
+				content: '';
+				clear: both;
+			}
+			.anchor_head{
+				width: 100%;
+				height: 24px;
+				border-bottom: 1px solid #000000;
+				.anchor_head_left{
+					float: left;
+					overflow: hidden;
+					line-height: 24px;
+				}
+				.anchor_head_right{
+					float: right;
+					overflow: hidden;
+					line-height: 24px;
+					cursor: pointer;
+					&:hover{
+						text-decoration: underline;
+					}
+				}
+
+			}
+			ul{
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				li{
+					width: 100%;
+					height: 62px;
+					background-color: #f5f5f5;
+					margin: 10px 0;
+					font-size: 14px;
+					position: relative;
+					.dj_img{
+						width: 50px;
+						height: 50px;
+						margin: 6px;
+					}
+					.dj_name{
+						/*display: inline-block;*/
+						/*vertical-align: top;*/
+						position: absolute;
+						top: 0;
+						left: 62px;
+						width: 100px;
+						white-space: nowrap;
+						text-overflow: ellipsis;
+						overflow: hidden;
+						line-height: 31px;
+						margin-left: 20px;
+					}
+					.dj_category{
+						position: absolute;
+						top: 31px;
+						left: 62px;
+						width: 100px;
+						white-space: nowrap;
+						text-overflow: ellipsis;
+						overflow: hidden;
+						line-height: 31px;
+						margin-left: 20px;
+					}
+				}
+			}
+		}
+	}
+	/*这里不想写了 实际上应该重新写左右两边的布局 参照myMu的index*/
+	.blank{
+		height: 136px;
+		width: 100%;
+	}
 	&::after{
 		display: block;
 		content: '';
 		clear: both;
-	}
-}
-.wrap_left{
-	float: left;
-	width: 100%;
-	margin-right: -251px;
-	min-height: 10px;
-	height: auto;
-	overflow: hidden;
-	.content_box{
-		width: 729px;
-		height: auto;
-		.content{
-			width: 709px;
-			display: block;
-			margin: 10px;
-			margin-bottom: 15px;
-			min-height: 40px;
-		}
 	}
 }
 .hot{
@@ -244,6 +400,10 @@ export default {
 			line-height: 33px;
 			margin-right: 20px;
 			overflow: hidden;
+			cursor: pointer;
+			&:hover{
+				text-decoration: underline;
+			}
 		}
 
 	}
@@ -286,6 +446,10 @@ export default {
 			line-height: 33px;
 			margin-right: 20px;
 			overflow: hidden;
+			cursor: pointer;
+			&:hover{
+				text-decoration: underline;
+			}
 		}
 
 	}
@@ -328,6 +492,10 @@ export default {
 			line-height: 33px;
 			margin-right: 20px;
 			overflow: hidden;
+			cursor: pointer;
+			&:hover{
+				text-decoration: underline;
+			}
 		}
 
 	}
@@ -355,99 +523,12 @@ export default {
 			line-height: 33px;
 			margin-right: 20px;
 			overflow: hidden;
+			cursor: pointer;
+			&:hover{
+				text-decoration: underline;
+			}
 		}
 
-	}
-}
-.wrap_right{
-	float: right;
-	width: 250px;
-	min-height: 100px;
-	overflow: hidden;
-	border-left: 1px solid #000000;
-	border-bottom: 1px solid #000000;
-	.user{
-		width: 100%;
-		height: 165px;
-		border-bottom: 1px solid #000000;
-	}
-	.songer{
-		width: auto;
-		padding: 10px;
-		height: auto;
-		font-size: 14px;
-		&::after{
-			display: block;
-			content: '';
-			clear: both;
-		}
-		.songer_head{
-			width: 100%;
-			height: 24px;
-			border-bottom: 1px solid #000000;
-			.songer_head_left{
-				float: left;
-				overflow: hidden;
-				line-height: 24px;
-			}
-			.songer_head_right{
-				float: right;
-				overflow: hidden;
-				line-height: 24px;
-			}
-
-		}
-		ul{
-			list-style: none;
-			margin: 0;
-			padding: 0;
-			width: 100%;
-			li{
-				width: 100%;
-				height: 62px;
-				background-color: #f5f5f5;
-				margin: 10px 0;
-			}
-		}
-	}
-	.anchor{
-		width: auto;
-		padding: 10px;
-		height: auto;
-		font-size: 14px;
-		&::after{
-			display: block;
-			content: '';
-			clear: both;
-		}
-		.anchor_head{
-			width: 100%;
-			height: 24px;
-			border-bottom: 1px solid #000000;
-			.anchor_head_left{
-				float: left;
-				overflow: hidden;
-				line-height: 24px;
-			}
-			.anchor_head_right{
-				float: right;
-				overflow: hidden;
-				line-height: 24px;
-			}
-
-		}
-		ul{
-			list-style: none;
-			margin: 0;
-			padding: 0;
-			width: 100%;
-			li{
-				width: 100%;
-				height: 62px;
-				background-color: #f5f5f5;
-				margin: 10px 0;
-			}
-		}
 	}
 }
 .footer{

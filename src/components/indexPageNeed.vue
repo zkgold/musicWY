@@ -2,7 +2,7 @@
 	<div class="picapp">
 		<div class="wrap">
 			<ul>
-				<li v-for="(item,id) in obj" :key="id">
+				<li v-for="(item,id) in obj" :key="id" @click="toList(item.id)">
 					<img :src="item.pic">
 					<span>{{item.name}}</span>
 					<!-- <span class="wrap_author">{{item.author}}</span> -->
@@ -15,6 +15,11 @@
 export default {
 	name: 'indexPageNeed',
 	props: ['obj'],
+	methods: {
+		toList(id) {
+			console.log('list',id)
+		}
+	}
 }
 </script>
 <style lang='scss' scoped>
@@ -43,10 +48,14 @@ ul{
 			float: left;
 			width: 140px;
 			margin-bottom: 3px;
+			font-size: 14px;
 			&:after{
 				content: '';
 				display: block;
 				clear: both;
+			}
+			&:hover{
+				text-decoration: underline;
 			}
 		}
 	}

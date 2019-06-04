@@ -26,6 +26,22 @@ const router = new Router({
 			},{
 				path: 'songer',
 				component: () => import('../views/discoverMu/songer')
+			},{
+				path: 'artist/:id',
+				// 将在this.$route.params中公开
+				component: () => import('../views/other/artist.vue'),
+			},{
+				path: 'music/:id',
+				component: () => import('../views/other/music.vue')
+			},{
+				path: 'songList/:id',
+				component: () => import('../views/other/songList.vue')
+			},{
+				path: 'album/:id',
+				component: () => import('../views/other/album.vue')
+			},{
+				path: 'program/:id',
+				component: () => import('../views/other/program.vue')
 			}]
 		},{
 			path: 'myMu',
@@ -99,6 +115,9 @@ const router = new Router({
 	},{
 		path: '/QV',
 		component: () => import('../components/loginIn/QQView.vue')
+	},{
+		path: '/test',
+		component: () => import('../components/comments.vue')
 	},{
 		path: '*',
 		name: 'error',

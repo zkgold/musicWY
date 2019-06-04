@@ -6,19 +6,17 @@
 				<div class="navigation nav">
 					<ul>
 						<li @click="mark(0,$event)" :class="{blackB: arrow[0]}">
-							<router-link to="/discoverMu" class="link">discover</router-link>
+							<router-link to="/discoverMu" class="link">发现音乐</router-link>
 							<div :class="{arrow: arrow[0],noArrow: !arrow[0]}"></div>
 						</li>
-						<li @click="mark(1,$event)" :class="{blackB: arrow[1]}"><router-link to="/myMu" class="link">my</router-link><div :class="{arrow: arrow[1],noArrow: !arrow[1]}"></div></li>
-						<li @click="mark(2,$event)" :class="{blackB: arrow[2]}"><router-link to="/friendsMu" class="link">firends</router-link><div :class="{arrow: arrow[2],noArrow: !arrow[2]}"></div></li>
-						<!-- <li @click="mark(3,$event)" :class="{blackB: arrow[3]}"><router-link to="/shopping" class="link">shopping</router-link><div :class="{arrow: arrow[3],noArrow: !arrow[3]}"></div></li>
-						<li @click="mark(4,$event)" :class="{blackB: arrow[4]}"><router-link to="/musical" class="link">musical</router-link><div :class="{arrow: arrow[4],noArrow: !arrow[4]}"></div></li> -->
-						<li @click="toShopping()" :class="{blackB: arrow[3]}"><div class="link">shopping</div></li>
-						<li @click="toMuscial()" :class="{blackB: arrow[4]}"><div class="link">musical</div></li>
-						<li @click="mark(5,$event)" :class="{blackB: arrow[5]}"><router-link to="/download" class="link">download</router-link><div :class="{arrow: arrow[5],noArrow: !arrow[5]}"></div></li>
+						<li @click="mark(1,$event)" :class="{blackB: arrow[1]}"><router-link to="/myMu" class="link">我的音乐</router-link><div :class="{arrow: arrow[1],noArrow: !arrow[1]}"></div></li>
+						<li @click="mark(2,$event)" :class="{blackB: arrow[2]}"><router-link to="/friendsMu" class="link">朋友</router-link><div :class="{arrow: arrow[2],noArrow: !arrow[2]}"></div></li>
+						<li @click="toShopping()" :class="{blackB: arrow[3]}"><div class="link">商城</div></li>
+						<li @click="toMuscial()" :class="{blackB: arrow[4]}"><div class="link">音乐人</div></li>
+						<li @click="mark(5,$event)" :class="{blackB: arrow[5]}"><router-link to="/download" class="link">下载</router-link><div :class="{arrow: arrow[5],noArrow: !arrow[5]}"></div></li>
 					</ul>
 				</div>
-				<div class="navigation right user" id="user" v-on:mouseenter="userShow()" @mouseleave="userFade()"><span v-if="userLoginIn">user</span><span v-else class="user_img"></span><span class="user_triangle"></span></div>
+				<div class="navigation right user" id="user" v-on:mouseenter="userShow()" @mouseleave="userFade()"><span v-if="userLoginIn">未登录</span><span v-else class="user_img"></span><span class="user_triangle"></span></div>
 				<div :class="{user_list: !disNone, disNone: disNone}" v-on:mouseenter="userShow()" @mouseleave="userFade()">
 					<ul v-if="loginIn">
 						<li v-for="(item,id) in userList" :key="id" @click="userFade()">
@@ -27,12 +25,12 @@
 						<li @click="loginOut()" class="user-login">退出</li>
 					</ul>
 					<ul v-else>
-						<li v-for="(item,id) in loginStyle" :key="id" @click="loginInWithStyle(id)">
+						<li v-for="(item,id) in loginStyle" :key="id" @click="loginInWithStyle(id)" class="iNeedClick">
 							<span class="list_to">{{item}}</span>
 						</li>
 					</ul>
 				</div>
-				<div class="navigation creater right"><div>creater</div></div>
+				<div class="navigation creater right"><div>创作者中心</div></div>
 				<div class="navigation search right">
 					<div class="search_wrap">
 						<div class="search_le">||</div>
@@ -216,6 +214,7 @@ export default {
 	width: 70px;
 	cursor: pointer;
 	position: relative;
+	font-size: 12px;
 	.user_triangle{
 		position: absolute;
 		top: 32px;
@@ -285,7 +284,7 @@ export default {
 	width: 90px;
 	height: 100%;
 	div{
-		font-size: 12px;
+		font-size: 10px !important;
 		width: 70px;
 		height: 30px;
 		margin: 20px 10px;
@@ -337,18 +336,6 @@ export default {
 		}
 
 	}
-	/*input{
-		width: 138px;
-		height: 30px;
-		border-radius: 15px;
-		outline: none;
-		border: none;
-		&::before{
-			content: '||';
-			display: inline-block;
-			width: 15px;
-		}
-	}*/
 
 }
 .loginIn{
@@ -361,6 +348,7 @@ export default {
 	box-shadow: 5px 5px 5px;
 	background-color: #fff;
 	border-radius: 5px;
+	z-index: 100;
 }
 .display{
 	display: none;

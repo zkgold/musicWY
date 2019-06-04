@@ -4,30 +4,26 @@
 			<div class="wrap_left">
 				<div class="wrap_box">
 					<h2>云音乐特色榜</h2>
-					<ul>
-						<li>
-							<div>
-								<div class="pic1"><img class="pic215" src="http://p2.music.126.net/DrRIg6CrgDfVLEph9SNh7w==/18696095720518497.jpg?param=40y40"></div>
-								<p class="top1"><a href="">云音乐飙升榜</a></p>
-								<p class="bottom1">每日更新</p>
+					<ul >
+						<li v-for="(item,id) in topLists" :key="id" @click="toRank(item)">
+							<div >
+								<div class="pic1">
+									<img :src="item.coverImgUrl" alt="O" class="coverUrl">
+								</div>
+								<p class="top1"><a href="#">{{item.name}}</a></p>
+								<p class="bottom1">{{item.updateFrequency}}</p>
 							</div>
 						</li>
-						<li>
-							<div>
-								<div class="pic1"><img class="pic215" src="http://p2.music.126.net/DrRIg6CrgDfVLEph9SNh7w==/18696095720518497.jpg?param=40y40" alt="loading"></div>
-								<p class="top1"><a href="">云音乐飙升榜</a></p>
-								<p class="bottom1">每日更新</p>
-							</div>
-						</li>
-
 					</ul>
 					<h2>全球媒体榜</h2>
-					<ul>
-						<li v-for="(item,id) in global" v-bind:key='id'>
-							<div class="pic1">
-								<img src="http://p2.music.126.net/DrRIg6CrgDfVLEph9SNh7w==/18696095720518497.jpg?param=40y40" alt="O" class="pic215">
-								<p class="top1"><a href="item.href">{{item.name}}</a></p>
-								<p class="bottom1">{{item.next}}</p>
+					<ul >
+						<li v-for="(item,id) in lists" :key="id" @click="toRank(item)">
+							<div >
+								<div class="pic1">
+									<img :src="item.coverImgUrl" alt="O" class="coverUrl">
+								</div>
+								<p class="top1"><a href="#">{{item.name}}</a></p>
+								<p class="bottom1">{{item.updateFrequency}}</p>
 							</div>
 						</li>
 					</ul>
@@ -36,17 +32,17 @@
 			<div class="wrap_right">
 				<div class="right_top">
 					<div class="top_box">
-						<div class="top_fir"><img src="http://p2.music.126.net/DrRIg6CrgDfVLEph9SNh7w==/18696095720518497.jpg?param=150y150"></div>
+						<div class="top_fir"><img :src="list.coverImgUrl"></div>
 						<div class="top_name">
 								<div class="name1">
-									<span>云音乐飙升榜</span>
+									<span>{{list.name}}</span>
 								</div>
 								<div class="name2">
-									更新时间 每天
+									{{list.updateFrequency}}
 								</div>
 								<div class="name3">
-									<button class="top_play top_but">播放</button>
-									<button class="top_collection top_but">1776002</button>
+									<button class="top_play top_but" @click="playList()">播放</button>
+									<button class="top_collection top_but">{{list.subscribedCount}}</button>
 									<button class="top_send top_but">转发</button>
 									<button class='top_down top_but'>下载</button>
 									<button class="top_command top_but">评论</button>
@@ -58,18 +54,8 @@
 				</div>
 				<div class="right_bottom">
 					<div class="right_box">
-						<songList :songList="musics"></songList>
-						<h2 class="right_command">评论 <span>共2222条</span></h2>
-						<div></div>
-						<h2 class="command_intere">精彩评论</h2>
-						<div></div>
-						<h2 class='command_new'>最新评论</h2>
-						<div>
-							<ul>
-								<li v-for="(item,id) in newCommand" :key="id">{{item}}</li>
-							</ul>
-						</div>
-						<div class="right_page"></div>
+						<songList :listContainId="list"></songList>
+						<comment :id="list" :type="type"></comment>
 					</div>
 
 				</div>
@@ -82,22 +68,49 @@
 	</div>
 </template>
 <script>
+import {toplist} from '../../api/loadFirstInterface.js'
 import songList from '../../components/songList.vue'
+import comment from '../../components/comments.vue'
 export default {
 	name: 'command',
 	data: function() {
 		return {
-			musicCloud: [],
-			global: [{src: 'http://p2.music.126.net/DrRIg6CrgDfVLEph9SNh7w==/18696095720518497.jpg?param=40y40',href:'#',name: 'zk',next:'zk'},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}],
-			musics: [{id:1,cont:'no',time: '2m3s',songer:'zuc'}],
-			newCommand:[]
+			topLists: [],
+			lists: [],
+			list: '',
+			type: 2,
+
 		}
 	},
 	methods:{
 		// 这里产生了一个问题 刷新时会导致discoverMu的index的导航默认推荐  假想可以用vuex解决
+		playList() {
+			confirm("不支持列表播放 请点击单个音乐")
+		},
+		toRank(item) {
+			this.list = item
+		}
 	},
 	components: {
-		songList
+		songList, comment
+	},
+	created() {
+		//现在实行将数据传入组件而不是由组件进行请求
+		toplist().then(res => {
+			this.list = res.list[0]
+			let topLists = []
+			let lists = []
+			res.list.map((ele) => {
+				if(ele.ToplistType) {
+					topLists.push(ele)
+				}else {
+					lists.push(ele)
+				}
+			})
+			this.topLists = topLists
+			this.lists = lists
+			console.log('idFrom',this.list)
+		})
 	}
 }
 </script>
@@ -140,7 +153,7 @@ export default {
 	h2{
 		margin: 0;
 		padding: 0 10px 12px 15px;
-    	font-size: 14px;
+    	font-size: 16px;
     	color: #000;
     	margin-top: 20px;
 	}
@@ -160,13 +173,17 @@ export default {
 				height: 40px;
 				vertical-align: center;
 				position: relative;
-
+				font-size: 12px;
 				.pic1{
 					position: absolute;
 					left: 0;
 					top: 0;
 					width: 40px;
 					height: 40px;
+					img{
+						width: 40px;
+						height: 40px;
+					}
 				}
 				.top1{
 					position: absolute;
@@ -189,6 +206,7 @@ export default {
 					padding: 0;
 					height: 15px;
 					line-height: 15px;
+					color: #BEBEBE;
 				}
 			}
 			&:hover{
@@ -283,7 +301,7 @@ export default {
 .footer{
 	width: 100%;
 	text-align: center;
-	padding: 20px;
+	padding: 20px 0;
 	border-top: 1px solid black;
 }
 </style>

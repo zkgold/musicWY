@@ -8,8 +8,8 @@
 				</div>
 			</div>
 			<div class="cont">
-				<div class="cont_left">y</div>
-				<div class="cont_right">y</div>
+				<div class="cont_left">受不了权啊</div>
+				<div class="cont_right">亲</div>
 			</div>
 		</div>
 	</div>
