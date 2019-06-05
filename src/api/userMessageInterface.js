@@ -11,7 +11,7 @@ export const subcount = () => {
 // 获取用户详情
 export const detail = (uid) => {
 	return request({
-		url: '/login/detail',
+		url: '/user/detail',
 		params: {
 			uid: uid
 		}

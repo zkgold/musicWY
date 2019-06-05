@@ -4,8 +4,8 @@
 			<div class="top"><span>手机号登录</span><span class="dele" @click="dele()">x</span></div>
 			<div class="cont">
 				<div class="cont_form">
-					<div><input type="" name="" class="num"></div>									
-					<div><input type="" name="" class="pwd"></div>
+					<div><input type="" name="" class="num" v-model="phone"></div>									
+					<div><input type="" name="" class="pwd" v-model="pwd"></div>
 					<div>
 						<div class="left">自动登录</div><div class="right"><a href="#">忘记密码</a></div>
 					</div>
@@ -21,20 +21,32 @@
 import {login,list} from '../../api/staff.js'
 export default {
 	name: 'Phone',
+	data: function() {
+		return {
+			phone: null,
+			pwd: null,
+		}
+	},
 	methods: {
 		dele() {
 			// console.log(this.$parent.showLoginView)
 			this.$emit('cancel')
 		},
 		login_but() {
-			let num = document.querySelector('.num').value;
-			let pwd = document.querySelector('.pwd').value;
-			let that = this
-			login['phone'](num,pwd).then((res) => {
-				that.acceptAccount(res.account)
-				// that.setUid(res.account.id)
-				that = null
+			// let num = document.querySelector('.num').value;
+			// let pwd = document.querySelector('.pwd').value;
+			login['phone'](this.phone,this.pwd).then((res) => {
+				if(res.code == 400) {
+					this.loginErr()
+				}else {
+					this.acceptAccount(res.account)					
+				}
 			})
+		},
+		loginErr() {
+			confirm("error phone or password")
+			this.phone = ''
+			this.pwd = ''
 		},
 		acceptAccount(account) {
 			// let acc = account

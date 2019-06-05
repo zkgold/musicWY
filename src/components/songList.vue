@@ -1,7 +1,6 @@
 <template>
 	<div id='appC'>
 		<div class="box_title">
-			<div v-show="false">{{id}}</div>
 			<div class="title1">
 				<span>歌曲列表</span>
 				<span class="box_count">{{trackCount}}首歌</span>
@@ -50,7 +49,7 @@
 import {playlistDetail} from '../api/loadFirstInterface.js'
 export default {
 	name: 'songList',
-	props: ['listContainId'],
+	props: ['id'],
 	data: function() {
 		return {
 			// musics: this.songList,
@@ -63,18 +62,23 @@ export default {
 		}
 	},
 	computed: {
-		id() {
-			console.log('idChangeReally')
-			if(!this.listContainId) {
-
-			}else {
-				playlistDetail(this.listContainId.id).then(res => {
-					this.playCount = res.playlist.playCount
-					this.tracksNext = res.playlist.tracks
-					this.trackCount = res.playlist.trackCount
-				})
-			}
-			return this.listContainId.id
+	},
+	watch: {
+		id : function() {
+				if((typeof this.id == "string") || (typeof this.id == "number")) {
+					playlistDetail(this.id).then(res => {
+						this.playCount = res.playlist.playCount
+						this.tracksNext = res.playlist.tracks
+						this.trackCount = res.playlist.trackCount
+					})
+				}else if(typeof this.id == "object") {
+					playlistDetail(this.id.id).then(res => {
+						this.playCount = res.playlist.playCount
+						this.tracksNext = res.playlist.tracks
+						this.trackCount = res.playlist.trackCount
+					})
+				}else {}
+			
 		}
 	},
 	methods: {
@@ -93,14 +97,14 @@ export default {
 		
 	},
 	created() {
-		console.log('songListGetIdV?')
-		// playlistDetail(this.listContainId.id).then(res => {
-		// 	this.playCount = res.playlist.playCount
-		// 	this.tracksNext = res.playlist.tracks
-		// 	this.trackCount = res.playlist.trackCount
-		// 	console.log(res.playlist.tracks)
-		// })
-	}
+		if((typeof this.id == "string") || (typeof this.id == "number")) {
+			playlistDetail(this.id).then(res => {
+				this.playCount = res.playlist.playCount
+				this.tracksNext = res.playlist.tracks
+				this.trackCount = res.playlist.trackCount
+			})
+		}
+}
 }
 </script>
 <style lang='scss' scoped>

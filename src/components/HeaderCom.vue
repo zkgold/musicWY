@@ -16,7 +16,7 @@
 						<li @click="mark(5,$event)" :class="{blackB: arrow[5]}"><router-link to="/download" class="link">下载</router-link><div :class="{arrow: arrow[5],noArrow: !arrow[5]}"></div></li>
 					</ul>
 				</div>
-				<div class="navigation right user" id="user" v-on:mouseenter="userShow()" @mouseleave="userFade()"><span v-if="userLoginIn">未登录</span><span v-else class="user_img"></span><span class="user_triangle"></span></div>
+				<div class="navigation right user" id="user" v-on:mouseenter="userShow()" @mouseleave="userFade()"><span v-if="userLoginIn">未登录</span><img v-else :src="avatarUrl"class="user_img"></img><span class="user_triangle"></span></div>
 				<div :class="{user_list: !disNone, disNone: disNone}" v-on:mouseenter="userShow()" @mouseleave="userFade()">
 					<ul v-if="loginIn">
 						<li v-for="(item,id) in userList" :key="id" @click="userFade()">
@@ -45,6 +45,7 @@
 <script>
 import phone from './loginIn/Phone.vue'
 import {login} from '../api/staff.js'
+import {detail} from '../api/userMessageInterface.js'
 export default {
 	name: 'HeaderCom',
 	data: function() {
@@ -56,6 +57,7 @@ export default {
 			showLoginView: [false,this.showWeiXin,this.showQQ],
 			loginIn: false,
 			userLoginIn: true,
+			avatarUrl: '',
 
 		}
 	},
@@ -86,9 +88,15 @@ export default {
 		},
 		initUser(obj) {
 			//这个反理解
-			this.userLoginIn = false
-			this.loginIn = true
-			console.log(obj)
+			//得到用户登录返回的消息
+			if(obj.id) {
+				this.userLoginIn = false
+				this.loginIn = true
+			} 
+			console.log(obj.id)
+			detail(obj.id).then(res => {
+				this.avatarUrl = res.profile.avatarUrl
+			})
 		},
 		loginOut() {
 			this.userLoginIn = true

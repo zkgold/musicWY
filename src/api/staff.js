@@ -7,8 +7,10 @@ export const login = {
 		return request({
 			url: '/login/cellphone',
 			params: {
-				phone: 17826150117,
-				password: 'chen85448406'
+				// phone: 17826150117,
+				// password: 'chen85448406'
+				phone: phone,
+				password: pwd
 			}
 		})
 	},

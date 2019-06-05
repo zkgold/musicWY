@@ -54,7 +54,7 @@
 				</div>
 				<div class="right_bottom">
 					<div class="right_box">
-						<songList :listContainId="list"></songList>
+						<songList :id="list"></songList>
 						<comment :id="list" :type="type"></comment>
 					</div>
 
@@ -88,7 +88,7 @@ export default {
 			confirm("不支持列表播放 请点击单个音乐")
 		},
 		toRank(item) {
-			this.list = item
+			this.list = item ? null : this.list = item
 		}
 	},
 	components: {

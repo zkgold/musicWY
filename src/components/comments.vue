@@ -1,6 +1,6 @@
 <template>
 	<div id="comment_app">
-		<div v-show="false">{{idC}}</div>
+		<!-- <div v-show="false">{{idC}}</div> -->
 		<span class="titleFir">
 			评论
 			<span class="titleFir_r">共{{total}}条评论</span></span>
@@ -92,19 +92,11 @@ export default {
 		right() {
 			return this.currentPage + 3 < this.maxPage
 		},
-		//这里写idC的目的是为了能在id改变的时候重新请求评论
-		idC() {
-			console.log('commentCount')
-			// 这里的id未定义 如何解决这种问题？
-			// try{
-			// 	if(this.id) {
-					this.type == 0 ? this.initMusic() : null
-					this.type == 2 ? this.initList() : null				
-				// }
-			// }catch (e) {
-			// 	console.log(e)
-			// }
-			return this.id 
+	},
+	watch: {
+		id: function() {
+			this.type == 0 ? this.initMusic() : null
+			this.type == 2 ? this.initList() : null
 		}
 	},
 	methods: {
@@ -140,7 +132,6 @@ export default {
 		initList() {
 			console.log('?',typeof this.id)
 			if((typeof this.id == "string") || (typeof this.id == "number")) {
-				console.log('a')
 				playlist(this.id).then(res => {
 					this.hotComments = res.hotComments
 					this.comments = res.comments
@@ -148,7 +139,6 @@ export default {
 				})
 			}else if( this.id == null) {console.log('null')}
 			else if(typeof this.id == "object") {
-				console.log('v')
 				playlist(this.id.id).then(res => {
 					this.hotComments = res.hotComments
 					this.comments = res.comments
@@ -161,11 +151,9 @@ export default {
 	created() {
 		//这里是判断传入的是对象还是数字或字符从而进行请求
 		if(this.id && ((typeof this.id == "string") || (typeof this.id == "number"))) {
-			console.log("createdGet")
 			this.type == 0 ? this.initMusic() : null
 			this.type == 2 ? this.initList() : null
 		}
-		console.log('idGet',this.id)
 	}
 
 }
