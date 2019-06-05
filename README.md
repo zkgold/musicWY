@@ -20,4 +20,8 @@ $ npm install
 - 运行
 ```
 $ npm run serve
+<<<<<<< HEAD
 ```
+=======
+```
+>>>>>>> 75ca15fcb6a992ed1e6da24c1aecf2fe76972382
